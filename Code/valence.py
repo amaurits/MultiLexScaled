@@ -276,9 +276,6 @@ def calc_corpus_valence(corpusfile, valencefile, lexnames, lexiconlist, mods,
     For very large files, this can be memory-intensive. Two ways to minimize the load:
     - with nrjobs=1, use 'yield' (in the function yieldtext) to load only 1 line at a time
     - with nrjobs>1, run the main valence computation in multiple rounds
-
-    TODO: convert this function to an i/o wrapper around pandas dataframe-based operation
-    (as is already done in calibrate.py).
     """
     import csv
     import gc
@@ -325,10 +322,6 @@ def calc_corpus_valence(corpusfile, valencefile, lexnames, lexiconlist, mods,
             for row in inreader:
                 corpusdata.append([row[idcol], ' '.join(row[x] for x in textcols)])
         nrtexts = len(corpusdata)
-        # imdb hardcoding
-        if nrtexts > 50000:
-            corpusdata = corpusdata[:50000]
-            nrtexts = 50000
 
         # First calculate number of rounds
         rounds = 1 + nrtexts // (nrjobs * texts_per_job)  # at least 1 round!
@@ -432,6 +425,27 @@ def getValences(textchunk, lexiconlist, wildlexicon, wild,
                                    chunknr=chunknr, textnr=count, updateinterval=updateinterval) \
                 for count, (id, text) in enumerate(chunktexts)]
     return (chunknr, valences)
+
+
+def calc_valences(df, idcol, textcols, lexnames, lexiconlist, wildlexicon,
+                  allterms, mods, modify=True, negaters=(),
+                  ignore=(), skip=(), need2tokenize=False,
+                  makelower=True, skippunct=True, wild='*',
+                  updateinterval=5000):
+    """Calculate valences for specified text columns in a dataframe."""
+    import pandas as pd
+
+    # We're producing a bunch of new variables, so best to iterate over rows
+    valences = []
+    for count, (idx, row) in enumerate(df.iterrows()):
+        valences.append([row[idcol],] + getValence(' '.join(str(row[x]) for x in textcols),
+                                                   lexiconlist, wildlexicon, wild, allterms,
+                                                   ignore, skip, mods if modify else dict(),
+                                                   negaters, need2tokenize=need2tokenize,
+                                                   makelower=makelower, skippunct=skippunct,
+                                                   textnr=count, updateinterval=updateinterval))
+    # Convert into new dataframe
+    return pd.DataFrame(valences, columns = ['id', 'nrwords'] + lexnames)
 
 
 # ***************************** Valence mark-up **************************

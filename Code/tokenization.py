@@ -52,8 +52,6 @@ def preprocess_texts(inputfile, outputfile, lang='english',
     Merge text fields specified in textcols and preprocess (focused on punctuation cleaning).
     """
     import csv
-    if stripspecial:
-        import unidecode  # Used to force decoding into ascii characters only
 
     csv.field_size_limit(1000000000)
 
@@ -70,21 +68,7 @@ def preprocess_texts(inputfile, outputfile, lang='english',
         for counter, article in enumerate(inreader):
             article_text = ' . '.join([article[col] for col in textcols])
 
-            # Optionally, remove any special characters (warning: will strip accented characters too!)
-            if stripspecial:
-                try:
-                    article_text = unidecode(article_text)
-                except:
-                    try:
-                        article_text = unidecode(article_text.decode('utf-8'))
-                    except:
-                        article_text = unidecode(article_text.decode('ascii', 'ignore'))
-
-            # Call main preprocessing function
-            preppedtext = punctuationPreprocess(article_text, lang)
-            # Optionally remove commas (rarely of any use)
-            if stripcomma:
-                preppedtext = stripcommas(preppedtext)
+            preppedtext = clean_text(article_text, lang, stripspecial, stripcomma)
 
             # Write text plus any columns specified in keepcols
             output.writerow([article[col] for col in keepcols] + [preppedtext,])
@@ -92,6 +76,34 @@ def preprocess_texts(inputfile, outputfile, lang='english',
                 print(("Processing text %d" % counter))
 
     return counter  # Return number of texts processed
+
+
+def clean_text(text, lang='english', stripspecial=False, stripcomma=False):
+    """Clean text, primarily to separate punctuation from words.
+
+    Similar to standard tokenization, but return as a text, not list of tokens.
+    Note: if stripspecial and stripcomma are both False, this reduces to simply calling punctuationPreprocess
+    """
+
+    # first, optionally remove any special characters (warning: will strip accented characters too!)
+    if stripspecial:
+        import unidecode  # Used to force decoding into ascii characters only
+        try:
+            text = unidecode(text)
+        except:
+            try:
+                text = unidecode(text.decode('utf-8'))
+            except:
+                text = unidecode(text.decode('ascii', 'ignore'))
+
+    # Call main text cleaning function
+    preppedtext = punctuationPreprocess(text, lang)
+
+    # Optionally remove commas (rarely of any use)
+    if stripcomma:
+        preppedtext = stripcommas(preppedtext)
+
+    return preppedtext
 
 
 # ******************************* Auxiliary functions *********************************************

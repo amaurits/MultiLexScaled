@@ -68,21 +68,25 @@ def calibrate_valencedata(df, valencecols, neutralscaler, stdev_adj,
     from sklearn.preprocessing import StandardScaler
     import numpy as np
 
-    if len(scalecol) >0:  # Scale valence data by values in the scalecol
-        # This is generally used to divide valences by text length
+    if len(scalecol) > 0:  # Scale valence data by values in the scalecol
+        # This is generally used to divide valences by text length, but usually happens in the valence calculation itself.
         for valencecol in valencecols:
             df[valencecol] = df.apply(lambda row: 0 if row[scalecol] == 0 else row[valencecol]/row[scalecol], axis=1)
 
     # Calibrate: rescale & recenter features
     if neutralscaler == '':
         neutralscaler = StandardScaler()
-        neutralscaler.fit(df[valencecols])
+        neutralscaler.fit(df[valencecols].to_numpy())
+        divide_at_end = True  # Need to divide avg. valence by std. dev. at the end to rescale
+    else:
+        divide_at_end = False
     scaled_features = neutralscaler.transform(df[valencecols])
     # Convert scaled features back into a dataframe
     calibratedcols = [valencecol + 'X' for valencecol in valencecols]
     scaled_features_df = pd.DataFrame(scaled_features, index=df.index,
                                       columns=calibratedcols)
     df = pd.concat([df, scaled_features_df], axis=1, join='inner')
+    # df = df.merge(scaled_features_df, on='id', how='left')
 
     # Now handle the various options for treating missing info & calculating averages
     denominator = float(len(valencecols))  # When averaging, how much to divide by
@@ -105,8 +109,11 @@ def calibrate_valencedata(df, valencecols, neutralscaler, stdev_adj,
         # Alternatively, to divide by the number of lexica used (i.e. count 'zero' values as 0,
         # instead of the calibrated equivalent), specify countmissings=True
 
+    new_stdev_adj = df['avg_valence'].std()
+    if divide_at_end:
+        df['avg_valence'] /= new_stdev_adj
     # Return neutral scaler, for possible later use (if we generated it here)
-    return df, neutralscaler, df['avg_valence'].std()
+    return df, neutralscaler, new_stdev_adj if divide_at_end else stdev_adj
 
 
 def calibrate_valences(valences, neutralscaler, stdev_adj,
@@ -125,7 +132,7 @@ def calibrate_valences(valences, neutralscaler, stdev_adj,
 
     For each valencedata item we return the calibrated value and optionally the individual calibrated components.
 
-    Note: this is a simplified version of calibrate_features (see below), which we use to calibrate files
+    Note: this is a simplified version of calibrate_features (see above), which we use to calibrate files
           with valence data. At some point, we might decompose calibrate_features to call the present function
           for the central calibration step.
     """
