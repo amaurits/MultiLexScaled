@@ -75,7 +75,7 @@ def preprocess_texts(inputfile, outputfile, lang='english',
             if counter % reportinterval == 0:
                 print(("Processing text %d" % counter))
 
-    return counter  # Return number of texts processed
+    return counter + 1  # Return number of texts processed
 
 
 def clean_text(text, lang='english', stripspecial=False, stripcomma=False):
