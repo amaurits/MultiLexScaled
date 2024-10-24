@@ -19,6 +19,7 @@ This repo includes:
 - code files to tokenize texts, calculate raw sentiment scores, and calibrate against a benchmark
 - several notebooks with code to preprocess all the lexica used (and URLs for where to acquire them), perform sentiment analysis on a small set of texts or on large corpora, and generate new scalers
 - scalers developed based on several benchmarks, which have been shown to work well in practice for a range of texts
+- replication notebooks and datasets for the tables and figures in the associated paper
 
 It is possible to generate a new benchmark from any representative corpus of texts. Note, however, that this must be a corpus for which it is reasonable to assume that the mean sentiment is neutral. When in doubt, it is probably preferable to use one of the supplied scalers.
 
