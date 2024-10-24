@@ -7,9 +7,9 @@ Easy-to-use, high-quality sentiment analysis. Instead of trying to develop yet a
 
 ### Citation
 
-If using MultiLexScaled, please cite the associated working paper (also available in this repo):
+If using MultiLexScaled, please cite the forthcoming paper (also available in this repo -- newest version coming soon):
 
-`van der Veen, A. Maurits, and Erik Bleich. 2021. "Automated sentiment analysis for the social sciences:
+`van der Veen, A. Maurits, and Erik Bleich. 2024. "Automated sentiment analysis for the social sciences:
 A domain-independent, lexicon-based approach." Williamsburg, VA: College of William & Mary.`
 
 
