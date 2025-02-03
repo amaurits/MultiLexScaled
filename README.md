@@ -7,7 +7,7 @@ Easy-to-use, high-quality sentiment analysis. Instead of trying to develop yet a
 
 ### Citation
 
-If using MultiLexScaled, please cite the PLOS One paper in which it is introduced and validated:
+If using MultiLexScaled, please cite the _PLOS One_ paper in which it is introduced and validated:
 
 van der Veen, A. Maurits, and Erik Bleich. 2024. "The advantages of lexicon-based sentiment analysis in an age of machine learning." _PLoS ONE_ 20(1): e0313092. https://doi.org/10.1371/journal.pone.0313092
 
