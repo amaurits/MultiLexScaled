@@ -7,10 +7,9 @@ Easy-to-use, high-quality sentiment analysis. Instead of trying to develop yet a
 
 ### Citation
 
-If using MultiLexScaled, please cite the forthcoming paper (also available in this repo -- newest version coming soon):
+If using MultiLexScaled, please cite the PLOS One paper in which it is introduced and validated:
 
-`van der Veen, A. Maurits, and Erik Bleich. 2024. "Automated sentiment analysis for the social sciences:
-A domain-independent, lexicon-based approach." Williamsburg, VA: College of William & Mary.`
+van der Veen, A. Maurits, and Erik Bleich. 2024. "The advantages of lexicon-based sentiment analysis in an age of machine learning." _PLoS ONE_ 20(1): e0313092. https://doi.org/10.1371/journal.pone.0313092
 
 
 _MultiLexScaled_ is designed to be easy to use through Jupyter notebooks, in the Anaconda python environment. It can easily be retooled to run from the command line or in some other environment.
